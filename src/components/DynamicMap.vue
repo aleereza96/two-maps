@@ -4,11 +4,11 @@
       style="height: 450px; width: 500px; display: flex; justify-content: center"
       ref="dyMap"
       :zoom="zoom"
-      :bounds="markers"
+      :bounds="initialBounds"
       @update:bounds="boundsUpdated"
     >
       <l-tile-layer :url="url" :attribution="attribution" />
-      <l-marker v-for="(marker, index) in getMarkers" :key="index" :lat-lng="marker" />
+      <l-marker v-for="(marker, index) in getMarkers" :key="index" :lat-lng="[marker.lat, marker.lon]" />
     </l-map>
   </div>
 </template>
@@ -16,7 +16,7 @@
 <script>
 export default {
   name: 'DynamicMap',
-  props: ['markers'],
+  props: ['markers', 'initialBounds'],
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -33,10 +33,10 @@ export default {
         const newMarkers = []
         this.markers.forEach((item) => {
           if (
-            item[0] > bounds._southWest.lat &&
-            item[1] > bounds._southWest.lng &&
-            item[0] < bounds._northEast.lat &&
-            item[1] < bounds._northEast.lng
+            item.lat > bounds._southWest.lat &&
+            item.lon > bounds._southWest.lng &&
+            item.lat < bounds._northEast.lat &&
+            item.lon < bounds._northEast.lng
           )
             newMarkers.push(item)
         })

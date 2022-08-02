@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <div v-if="initializing" style="text-align: center">
-      <img src="./assets/SVG_animated_loading_icon.svg" alt="" srcset="">
+      <img src="./assets/SVG_animated_loading_icon.svg" alt="" srcset="" />
     </div>
     <div v-else>
       <SimlpeMap :markers="markers" :bounds="bounds" />
-      <DynamicMap :markers="markers" />
+      <DynamicMap :markers="markers" :initial-bounds="bounds" />
     </div>
   </div>
 </template>
@@ -31,14 +31,13 @@ export default {
   mounted() {
     setTimeout(() => {
       this.markers = this.makeMarkers(jsonData)
-      this.bounds = this.makeMarkers(jsonData)
+      this.bounds = this.makeMarkers(jsonData).map((i) => [i.lat, i.lon])
       this.initializing = false
     }, 2000)
   },
   methods: {
     makeMarkers(json) {
-      const locations = JSON.parse(JSON.stringify(json)).object.locations
-      return locations.map((item) => [item.lat, item.lon])
+      return JSON.parse(JSON.stringify(json)).object.locations
     }
   }
 }
