@@ -11,7 +11,8 @@
     "core-js": "^3.6.5",
     "leaflet": "^1.8.0",
     "vue": "^2.6.11",
-    "vue2-leaflet": "^2.7.1"
+    "vue2-leaflet": "^2.7.1",
+    "vue2-leaflet-rotatedmarker": "^1.0.9"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.13",

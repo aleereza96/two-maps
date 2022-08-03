@@ -8,15 +8,20 @@
     >
       <l-tile-layer :url="url" :attribution="attribution" />
 
-      <l-marker v-for="(marker, index) in markers" :key="index" :lat-lng="[marker.lat, marker.lon]">
+      <l-rotated-marker
+        v-for="(marker, index) in markers"
+        :key="index"
+        :lat-lng="[marker.lat, marker.lon]"
+        :rotationAngle="marker.bearing"
+      >
         <l-icon :icon-size="[10, 15]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
-          <img src="../assets/car_topview.svg" alt="marker" v-bind="makeStyle(marker.bearing)" />
+          <img src="../assets/car_topview.svg" alt="marker" />
         </l-icon>
 
         <l-tooltip :options="{direction: 'top'}">
           {{ getDate(marker.timestamp) }}
         </l-tooltip>
-      </l-marker>
+      </l-rotated-marker>
 
       <l-polyline :lat-lngs="polyline.latlngs" :color="polyline.color"></l-polyline>
     </l-map>
@@ -43,9 +48,6 @@ export default {
     getDate(timestamp) {
       const date = new Date(timestamp)
       return date.toLocaleString('fa-FA', {timeZone: 'Asia/Tehran'})
-    },
-    makeStyle(bearing) {
-      return {style:{transform: `rotate(${bearing})deg;`}}
     }
   }
 }
