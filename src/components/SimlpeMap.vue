@@ -6,7 +6,7 @@
       :bounds="bounds"
       :options="{zoomControl: false, dragging: false, scrollWheelZoom: false}"
     >
-      <l-tile-layer :url="url" :attribution="attribution" />
+      <l-tile-layer :url="url" />
 
       <l-rotated-marker
         v-for="(marker, index) in markers"
@@ -35,8 +35,7 @@ export default {
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      zoom: 14,
+      zoom: 13,
       center: [47.41322, -1.219482],
       polyline: {
         latlngs: this.bounds,

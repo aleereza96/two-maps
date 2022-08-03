@@ -7,18 +7,26 @@
       :bounds="initialBounds"
       @update:bounds="boundsUpdated"
     >
-      <l-tile-layer :url="url" :attribution="attribution" />
-      <l-marker v-for="(marker, index) in getMarkers" :key="index" :lat-lng="[marker.lat, marker.lon]">
-        <l-icon :icon-size="[10, 15]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
-          <img src="../assets/car_topview.svg" alt="marker" v-bind="makeStyle(marker.bearing)" />
+      <l-control-fullscreen position="topleft" :options="{title: {false: 'Go big!', true: 'Be regular'}}" />
+
+      <l-tile-layer :url="url" />
+      
+      <l-rotated-marker
+        v-for="(marker, index) in getMarkers"
+        :key="index"
+        :lat-lng="[marker.lat, marker.lon]"
+        :rotationAngle="marker.bearing"
+      >
+        <l-icon :icon-size="[20, 25]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
+          <img src="../assets/car_topview.svg" alt="marker" />
         </l-icon>
 
         <l-tooltip :options="{direction: 'top'}">
           {{ getDate(marker.timestamp) }}
         </l-tooltip>
-      </l-marker>
+      </l-rotated-marker>
 
-      <l-polyline :lat-lngs="polylineLatLng" color="green"></l-polyline>
+      <l-polyline :lat-lngs="initialBounds" color="green"></l-polyline>
     </l-map>
   </div>
 </template>
@@ -30,7 +38,6 @@ export default {
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       zoom: 13,
       center: [47.41322, -1.219482],
       bounds: null
@@ -52,9 +59,6 @@ export default {
         })
         return newMarkers
       } else return this.markers
-    },
-    polylineLatLng() {
-      return this.getMarkers.map((i) => [i.lat, i.lon])
     }
   },
   methods: {
@@ -64,9 +68,6 @@ export default {
     getDate(timestamp) {
       const date = new Date(timestamp)
       return date.toLocaleString('fa-FA', {timeZone: 'Asia/Tehran'})
-    },
-    makeStyle(bearing) {
-      return {style: {transform: `rotate(${bearing})deg;`}}
     }
   }
 }

@@ -12,6 +12,7 @@
     "leaflet": "^1.8.0",
     "vue": "^2.6.11",
     "vue2-leaflet": "^2.7.1",
+    "vue2-leaflet-fullscreen": "^1.0.1",
     "vue2-leaflet-rotatedmarker": "^1.0.9"
   },
   "devDependencies": {
