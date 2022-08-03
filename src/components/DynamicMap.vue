@@ -8,7 +8,17 @@
       @update:bounds="boundsUpdated"
     >
       <l-tile-layer :url="url" :attribution="attribution" />
-      <l-marker v-for="(marker, index) in getMarkers" :key="index" :lat-lng="[marker.lat, marker.lon]" />
+      <l-marker v-for="(marker, index) in getMarkers" :key="index" :lat-lng="[marker.lat, marker.lon]">
+        <l-icon :icon-size="[10, 15]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
+          <img src="../assets/car_topview.svg" alt="marker" v-bind="makeStyle(marker.bearing)" />
+        </l-icon>
+
+        <l-tooltip :options="{direction: 'top'}">
+          {{ getDate(marker.timestamp) }}
+        </l-tooltip>
+      </l-marker>
+
+      <l-polyline :lat-lngs="polylineLatLng" color="green"></l-polyline>
     </l-map>
   </div>
 </template>
@@ -42,11 +52,21 @@ export default {
         })
         return newMarkers
       } else return this.markers
+    },
+    polylineLatLng() {
+      return this.getMarkers.map((i) => [i.lat, i.lon])
     }
   },
   methods: {
     boundsUpdated(bounds) {
       this.bounds = bounds
+    },
+    getDate(timestamp) {
+      const date = new Date(timestamp)
+      return date.toLocaleString('fa-FA', {timeZone: 'Asia/Tehran'})
+    },
+    makeStyle(bearing) {
+      return {style: {transform: `rotate(${bearing})deg;`}}
     }
   }
 }
