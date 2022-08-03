@@ -13,7 +13,7 @@
 <script>
 import SimlpeMap from './components/SimlpeMap'
 import DynamicMap from './components/DynamicMap'
-import jsonData from './test.json'
+import jsonData from './test-2.json'
 
 export default {
   name: 'App',
@@ -37,8 +37,19 @@ export default {
   },
   methods: {
     makeMarkers(json) {
-      return JSON.parse(JSON.stringify(json)).object.locations
+      const baseArray = JSON.parse(JSON.stringify(json)).object
+      let locations = []
+      baseArray.forEach((item) => {
+        locations = [...locations, ...item.locations]
+      })
+      return locations
     }
   }
 }
 </script>
+
+<style>
+.leaflet-control-attribution {
+  display: none !important;
+}
+</style>

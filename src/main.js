@@ -4,6 +4,7 @@ import {LMap, LTileLayer, LMarker, LIcon, LTooltip, LPolyline} from 'vue2-leafle
 import 'leaflet/dist/leaflet.css'
 import {Icon} from 'leaflet'
 import Vue2LeafletRotatedMarker from 'vue2-leaflet-rotatedmarker'
+import LControlFullscreen from 'vue2-leaflet-fullscreen'
 
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
@@ -21,6 +22,7 @@ Vue.component('l-icon', LIcon)
 Vue.component('l-tooltip', LTooltip)
 Vue.component('l-polyline', LPolyline)
 Vue.component('l-rotated-marker', Vue2LeafletRotatedMarker)
+Vue.component('l-control-fullscreen', LControlFullscreen)
 
 new Vue({
   render: (h) => h(App)
