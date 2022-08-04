@@ -30,7 +30,7 @@
 
 <script>
 export default {
-  name: 'SimlpeMap',
+  name: 'SimpleMap',
   props: ['bounds', 'markers'],
   data() {
     return {
