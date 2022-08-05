@@ -1,5 +1,6 @@
 <template>
   <div style="display: flex; justify-content: center; margin-top: 2rem">
+    {{getMarkers.length}}
     <l-map
       style="height: 450px; width: 500px; display: flex; justify-content: center"
       ref="dyMap"
@@ -12,7 +13,7 @@
       <l-tile-layer :url="url" />
 
       <l-rotated-marker
-        v-for="(marker, index) in markersWithPrecision"
+        v-for="(marker, index) in getMarkers"
         :key="index"
         :lat-lng="[marker.lat, marker.lon]"
         :rotationAngle="marker.bearing"
@@ -34,7 +35,7 @@
 <script>
 export default {
   name: 'DynamicMap',
-  props: ['markers', 'initialBounds', 'decimal'],
+  props: ['markers', 'initialBounds'],
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -59,15 +60,6 @@ export default {
         })
         return newMarkers
       } else return this.markers
-    },
-    markersWithPrecision() {
-      const rounded = this.getMarkers.map((item) => {
-        const shallowItem = {...item}
-        shallowItem.lat = this.makeNumWithPrecision(shallowItem.lat)
-        shallowItem.lon = this.makeNumWithPrecision(shallowItem.lon)
-        return shallowItem
-      })
-      return [...new Map(rounded.map((v) => [JSON.stringify([v.lat, v.lon]), v])).values()]
     }
   },
   methods: {
@@ -77,13 +69,6 @@ export default {
     getDate(timestamp) {
       const date = new Date(timestamp)
       return date.toLocaleString('fa-FA', {timeZone: 'Asia/Tehran'})
-    },
-    makeNumWithPrecision(num) {
-      if (!num.toString().includes('.')) return num
-      const numParts = num.toString().split('.')
-      const firstPart = numParts[0]
-      const secondPart = numParts[1].slice(0, this.decimal)
-      return Number([firstPart, secondPart].join().replace(',', '.'))
     }
   }
 }
