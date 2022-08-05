@@ -1,20 +1,18 @@
 <template>
   <div style="display: flex; justify-content: center">
-    <l-map
-      style="height: 450px; width: 500px"
-      :zoom="zoom"
-      :bounds="bounds"
-      :options="{zoomControl: false, dragging: false, scrollWheelZoom: false}"
-    >
+    {{ optimizedMarkers.length }}
+    <l-map style="height: 450px; width: 500px" :zoom="zoom" :bounds="bounds">
+      <l-control-fullscreen position="topleft" :options="{title: {false: 'Go big!', true: 'Be regular'}}" />
+
       <l-tile-layer :url="url" />
 
       <l-rotated-marker
-        v-for="(marker, index) in markers"
+        v-for="(marker, index) in optimizedMarkers"
         :key="index"
         :lat-lng="[marker.lat, marker.lon]"
         :rotationAngle="marker.bearing"
       >
-        <l-icon :icon-size="[10, 15]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
+        <l-icon :icon-size="[20, 25]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
           <img src="../assets/car_topview.svg" alt="marker" />
         </l-icon>
 
@@ -31,7 +29,7 @@
 <script>
 export default {
   name: 'SimpleMap',
-  props: ['bounds', 'markers'],
+  props: ['bounds', 'markers', 'distance'],
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -43,10 +41,46 @@ export default {
       }
     }
   },
+  computed: {
+    optimizedMarkers() {
+      if (!this.distance) return this.markers
+      let optMarkers = [this.markers[0]]
+      this.findDistantPoints(this.markers, optMarkers)
+
+      return optMarkers
+    }
+  },
   methods: {
+    findDistantPoints(array, secondArray) {
+      if (array.length) {
+        const initialValue = array[0]
+        const firstDistant = array.find((item) => {
+          if (this.getDistanceFromLatLon(initialValue.lat, initialValue.lon, item.lat, item.lon) > this.distance) return item
+        })
+        if (firstDistant) {
+          secondArray.push(firstDistant)
+          const newArr = array.slice(array.indexOf(firstDistant))
+          this.findDistantPoints(newArr, secondArray)
+        }
+      }
+    },
     getDate(timestamp) {
       const date = new Date(timestamp)
       return date.toLocaleString('fa-FA', {timeZone: 'Asia/Tehran'})
+    },
+    getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
+      const R = 6371000
+      const dLat = this.deg2rad(lat2 - lat1)
+      const dLon = this.deg2rad(lon2 - lon1)
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+      const d = R * c
+      return d
+    },
+    deg2rad(deg) {
+      return deg * (Math.PI / 180)
     }
   }
 }

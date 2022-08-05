@@ -4,20 +4,22 @@
       <img src="./assets/SVG_animated_loading_icon.svg" alt="" srcset="" />
     </div>
     <div v-else style="display: flex; flex-flow: row-reverse">
-      <div style="margin-left: 2rem; width: 35vw; margin-top: 50vh">
-        <p>Please select your precision:</p>
-        <input type="radio" id="precision1" name="precision" value="4" v-model="precision" />
-        <label for="precision1">11 m</label><br />
-        <input type="radio" id="precision2" name="precision" value="3" v-model="precision" />
-        <label for="precision2">111 m</label><br />
-        <input type="radio" id="precision3" name="precision" value="2" v-model="precision" />
-        <label for="precision3">1 km</label><br />
-        <input type="radio" id="precision4" name="precision" value="1" v-model="precision" />
-        <label for="precision4">11 km</label><br /><br />
+      <div style="margin-left: 2rem; width: 50rem; margin-top: 2rem">
+        <p>Please select your distance:</p>
+        <input type="radio" id="distance0" name="distance" :value="null" v-model="distance" />
+        <label for="distance0">default</label><br />
+        <input type="radio" id="distance1" name="distance" :value="100" v-model="distance" />
+        <label for="distance1">100 m</label><br />
+        <input type="radio" id="distance2" name="distance" :value="500" v-model="distance" />
+        <label for="distance2">500 m</label><br />
+        <input type="radio" id="distance3" name="distance" :value="1000" v-model="distance" />
+        <label for="distance3">1 km</label><br />
+        <input type="radio" id="distance4" name="distance" :value="5000" v-model="distance" />
+        <label for="distance4">5 km</label><br /><br />
       </div>
       <div style="">
-        <SimpleMap :markers="markers" :bounds="bounds" />
-        <DynamicMap :markers="markers" :initial-bounds="bounds" :decimal="precision" />
+        <SimpleMap :markers="markers" :bounds="bounds" :distance="distance" />
+        <DynamicMap :markers="markers" :initial-bounds="bounds" />
       </div>
     </div>
   </div>
@@ -39,13 +41,7 @@ export default {
       initializing: true,
       markers: [],
       bounds: [],
-      precision: 4
-    }
-  },
-  watch: {
-    precision() {
-      this.markers = this.makeMarkers(jsonData)
-      this.bounds = this.makeMarkers(jsonData).map((i) => [i.lat, i.lon])
+      distance: null
     }
   },
   mounted() {
@@ -62,7 +58,7 @@ export default {
       baseArray.forEach((item) => {
         locations = [...locations, ...item.locations]
       })
-      return locations
+      return locations.sort((a, b) => a.timestamp - b.timestamp)
     }
   }
 }
