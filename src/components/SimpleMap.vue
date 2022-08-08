@@ -1,7 +1,6 @@
 <template>
   <div style="display: flex; justify-content: center">
-    {{ optimizedMarkers.length }}
-    <l-map style="height: 450px; width: 500px" :zoom="zoom" :bounds="bounds">
+    <l-map style="height: 70vh; width: 70vw" :zoom="zoom" :bounds="bounds">
       <l-control-fullscreen position="topleft" :options="{title: {false: 'Go big!', true: 'Be regular'}}" />
 
       <l-tile-layer :url="url" />
@@ -12,10 +11,29 @@
         :lat-lng="[marker.lat, marker.lon]"
         :rotationAngle="marker.bearing"
       >
-        <l-icon :icon-size="[20, 25]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
-          <img src="../assets/car_topview.svg" alt="marker" />
+        <l-icon
+          v-if="index == 0"
+          :icon-size="[20, 25]"
+          :iconAnchor="[0, 0]"
+          :popupAnchor="[0, -35]"
+          :tooltipAnchor="[0, -35]"
+        >
+          <img src="../assets/car_topview_red.svg" alt="marker" />
         </l-icon>
 
+        <l-icon
+          v-else-if="index === optimizedMarkers.length - 1"
+          :icon-size="[20, 25]"
+          :iconAnchor="[0, 0]"
+          :popupAnchor="[0, -35]"
+          :tooltipAnchor="[0, -35]"
+        >
+          <img src="../assets/car_topview_green.svg" alt="marker" />
+        </l-icon>
+
+        <l-icon v-else :icon-size="[20, 25]" :iconAnchor="[0, 0]" :popupAnchor="[0, -35]" :tooltipAnchor="[0, -35]">
+          <img src="../assets/car_topview.svg" alt="marker" />
+        </l-icon>
         <l-tooltip :options="{direction: 'top'}">
           {{ getDate(marker.timestamp) }}
         </l-tooltip>
@@ -29,7 +47,7 @@
 <script>
 export default {
   name: 'SimpleMap',
-  props: ['bounds', 'markers', 'distance'],
+  props: ['bounds', 'markers', 'distance', 'showIcons'],
   data() {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -43,6 +61,7 @@ export default {
   },
   computed: {
     optimizedMarkers() {
+      if (!this.showIcons) return []
       if (!this.distance) return this.markers
       let optMarkers = [this.markers[0]]
       this.findDistantPoints(this.markers, optMarkers)
@@ -55,7 +74,8 @@ export default {
       if (array.length) {
         const initialValue = array[0]
         const firstDistant = array.find((item) => {
-          if (this.getDistanceFromLatLon(initialValue.lat, initialValue.lon, item.lat, item.lon) > this.distance) return item
+          if (this.getDistanceFromLatLon(initialValue.lat, initialValue.lon, item.lat, item.lon) > this.distance)
+            return item
         })
         if (firstDistant) {
           secondArray.push(firstDistant)

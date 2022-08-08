@@ -3,7 +3,10 @@
     <div v-if="initializing" style="text-align: center">
       <img src="./assets/SVG_animated_loading_icon.svg" alt="" srcset="" />
     </div>
-    <div v-else style="display: flex; flex-flow: row-reverse">
+    <div v-else>
+      <div>
+        <SimpleMap :markers="markers" :bounds="bounds" :distance="distance" :showIcons="showIcons" />
+      </div>
       <div style="margin-left: 2rem; width: 50rem; margin-top: 2rem">
         <p>Please select your distance:</p>
         <input type="radio" id="distance0" name="distance" :value="null" v-model="distance" />
@@ -17,9 +20,21 @@
         <input type="radio" id="distance4" name="distance" :value="5000" v-model="distance" />
         <label for="distance4">5 km</label><br /><br />
       </div>
-      <div style="">
-        <SimpleMap :markers="markers" :bounds="bounds" :distance="distance" />
-        <DynamicMap :markers="markers" :initial-bounds="bounds" />
+      <div>
+        <button
+          style="
+            background-color: #23a303;
+            cursor: pointer;
+            padding: 1.5rem;
+            margin-top: 0.5rem;
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+          "
+          @click="toggleIcons"
+        >
+          toggle icons
+        </button>
       </div>
     </div>
   </div>
@@ -27,21 +42,20 @@
 
 <script>
 import SimpleMap from './components/SimpleMap'
-import DynamicMap from './components/DynamicMap'
 import jsonData from './test-2.json'
 
 export default {
   name: 'App',
   components: {
-    SimpleMap,
-    DynamicMap
+    SimpleMap
   },
   data() {
     return {
       initializing: true,
       markers: [],
       bounds: [],
-      distance: null
+      distance: null,
+      showIcons: true
     }
   },
   mounted() {
@@ -59,6 +73,9 @@ export default {
         locations = [...locations, ...item.locations]
       })
       return locations.sort((a, b) => a.timestamp - b.timestamp)
+    },
+    toggleIcons() {
+      this.showIcons = !this.showIcons
     }
   }
 }
