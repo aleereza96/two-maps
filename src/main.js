@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import {Icon} from 'leaflet'
 import Vue2LeafletRotatedMarker from 'vue2-leaflet-rotatedmarker'
 import LControlFullscreen from 'vue2-leaflet-fullscreen'
+import router from './router'
 
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
@@ -25,5 +26,6 @@ Vue.component('l-rotated-marker', Vue2LeafletRotatedMarker)
 Vue.component('l-control-fullscreen', LControlFullscreen)
 
 new Vue({
+  router,
   render: (h) => h(App)
 }).$mount('#app')
