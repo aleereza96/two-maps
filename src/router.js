@@ -9,8 +9,8 @@ const options = {
   routes: [
     {
       name: 'root',
-      path: '/',
-      redirect:'/receipt/30',
+      path: '/receipt/:id',
+      props:true,      
       component: App
     }
   ]

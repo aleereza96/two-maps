@@ -42,37 +42,53 @@
 
 <script>
 import SimpleMap from './components/SimpleMap'
-import jsonData from './test-2.json'
 
 export default {
   name: 'App',
   components: {
     SimpleMap
   },
+  props:['íd'],
   data() {
     return {
       initializing: true,
       markers: [],
       bounds: [],
+      locations: [],
       distance: null,
       showIcons: true
     }
   },
+  created() { 
+    if(!this.$route.params.id) this.$router.push('/receipt/34')
+  },
   mounted() {
-    setTimeout(() => {
-      this.markers = this.makeMarkers(jsonData)
-      this.bounds = this.makeMarkers(jsonData).map((i) => [i.lat, i.lon])
-      this.initializing = false
-    }, 2000)
+    this.makeMarkers()
+      .then(() => {
+        this.bounds = this.markers.map((i) => [i.lat, i.lon])
+        this.initializing = false
+      })
+      .catch((err) => console.log(err))
   },
   methods: {
-    makeMarkers(json) {
-      const baseArray = JSON.parse(JSON.stringify(json)).object
-      let locations = []
-      baseArray.forEach((item) => {
-        locations = [...locations, ...item.locations]
+    async postData(url = '') {
+      let formdata = new FormData()
+      formdata.append('token', 'f522145b338412111096bbab51929eb577fb9cd05b8f41e643be0fb3b648e054')
+
+      let requestOptions = {
+        method: 'POST',
+        body: formdata,
+        redirect: 'follow'
+      }
+      const response = await fetch(url, requestOptions)
+      return response.json()
+    },
+    makeMarkers() {
+      const id = +this.$route.params.id
+      return this.postData(`https://tapi.cveh.ir/v1/map/${id}`).then((res) => {
+        res.data.locations.sort((a, b) => a.timestamp - b.timestamp)
+        this.markers = res.data.locations
       })
-      return locations.sort((a, b) => a.timestamp - b.timestamp)
     },
     toggleIcons() {
       this.showIcons = !this.showIcons
