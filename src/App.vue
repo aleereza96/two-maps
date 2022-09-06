@@ -73,7 +73,7 @@ export default {
   methods: {
     async postData(url = '') {
       let formdata = new FormData()
-      formdata.append('token', 'f522145b338412111096bbab51929eb577fb9cd05b8f41e643be0fb3b648e054')
+      formdata.append('token', `${process.env.VUE_APP_TOKEN}`)
 
       let requestOptions = {
         method: 'POST',
