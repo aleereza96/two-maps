@@ -3,6 +3,9 @@
     <div v-if="initializing" style="text-align: center">
       <img src="./assets/SVG_animated_loading_icon.svg" alt="" srcset="" />
     </div>
+    <div v-else-if="failed">
+      <h3>Something went wrong !!!</h3>
+    </div>
     <div v-else>
       <div>
         <SimpleMap :markers="markers" :bounds="bounds" :distance="distance" :showIcons="showIcons" />
@@ -48,19 +51,19 @@ export default {
   components: {
     SimpleMap
   },
-  props:['íd'],
+  props: ['íd'],
   data() {
     return {
       initializing: true,
       markers: [],
       bounds: [],
-      locations: [],
+      failed: false,
       distance: null,
       showIcons: true
     }
   },
-  created() { 
-    if(!this.$route.params.id) this.$router.push('/receipt/34')
+  created() {
+    if (!this.$route.params.id) this.$router.push('/receipt/34')
   },
   mounted() {
     this.makeMarkers()
@@ -68,7 +71,11 @@ export default {
         this.bounds = this.markers.map((i) => [i.lat, i.lon])
         this.initializing = false
       })
-      .catch((err) => console.log(err))
+      .catch((err) => {
+        this.initializing = false
+        this.failed = true
+        console.log(err)
+      })
   },
   methods: {
     async postData(url = '') {
